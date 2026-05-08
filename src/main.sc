@@ -1,23 +1,31 @@
-require: slotfilling/slotFilling.sc
-  module = sys.zb-common
-theme: /
+state:
+    q!: $regex<>
+    go!: /start
 
-    state: Start
-        q!: $regex</start>
-        a: Начнём.
+state: /start
+    event!: noContext
+    go!: /hello
 
-    state: Hello
-        intent!: /привет
-        a: Привет привет
+state: /hello
+    intent!: /Приветствие
+    a: Привет! Чем я могу вам помочь? Я умею показывать прогноз погоды и курс валют.
+        go!: /wait
 
-    state: Bye
-        intent!: /пока
-        a: Пока пока
+state: /weather
+    intent!: /ЗапросПогоды
+    a: Сегодня ожидается солнечная погода, температура +25°C. Это, конечно, пример, но я могу научиться получать реальные данные!
+        go!: /wait
 
-    state: NoMatch
-        event!: noMatch
-        a: Я не понял. Вы сказали: {{$request.query}}
+state: /currency
+    intent!: /КурсВалют
+    a: На текущий момент курс доллара составляет 75.5 руб., евро — 85.2 руб. (пример). За подробностями лучше обратиться к официальным источникам.
+        go!: /wait
 
-    state: Match
-        event!: match
-        a: {{$context.intent.answer}}
+state: /NoMatch
+    event!: noMatch
+    a: Извините, я вас не совсем понял. Я пока умею только приветствовать, подсказывать погоду и курсы валют. Попробуйте спросить по-другому.
+        go!: /wait
+
+state: /wait
+    q!: $regex<>
+    go!: {{ $caila.detectIntent().split("/")[1] || "/NoMatch" }}
