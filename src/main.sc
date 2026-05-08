@@ -1,3 +1,5 @@
+theme: /
+
 state:
     q!: $regex<>
     go!: /start
